@@ -1,0 +1,109 @@
+{% extends "flatpages/default.html" %}
+
+{% load custom_filters %}
+{% load custom_tags %}
+
+{% block content %}
+<h2>Страница авторизованного пользователя {{request.user.username}}</h2>
+<form action="{% url 'logout' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+</form>
+
+<button><a href="{% url 'subscribe' %}">Управление подписками</a></button>
+
+<div> Здесь отображаются все отклики по вашим новостям
+    <form method="GET">
+    <table border="1" cellpadding="10">
+        <thead>
+            <tr>
+                <th>News Filters</th>
+                <th>Comment Filters</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <!-- Фильтры для новости -->
+                <td>
+                    <label for="news_category">News category:</label><br>
+                    <select name="news_category" id="news_category">
+                        <option value="">Any</option>
+                        <option value="NEW" {% if request.GET.news_category == 'NEW' %}selected{% endif %}>Новость</option>
+                        <option value="TNK" {% if request.GET.news_category == 'TNK' %}selected{% endif %}>Танки</option>
+                        <option value="HEA" {% if request.GET.news_category == 'HEA' %}selected{% endif %}>Хилы</option>
+                        <option value="DAM" {% if request.GET.news_category == 'DAM' %}selected{% endif %}>ДД</option>
+                        <option value="DEA" {% if request.GET.news_category == 'DEA' %}selected{% endif %}>Торговцы</option>
+                        <option value="GUM" {% if request.GET.news_category == 'GUM' %}selected{% endif %}>Гильдмастеры</option>
+                        <option value="QUG" {% if request.GET.news_category == 'QUG' %}selected{% endif %}>Квестгиверы</option>
+                        <option value="BLA" {% if request.GET.news_category == 'BLA' %}selected{% endif %}>Кузнецы</option>
+                        <option value="TAN" {% if request.GET.news_category == 'TAN' %}selected{% endif %}>Кожевники</option>
+                        <option value="POT" {% if request.GET.news_category == 'POT' %}selected{% endif %}>Зельевары</option>
+                        <option value="SPM" {% if request.GET.news_category == 'SPM' %}selected{% endif %}>Мастера заклинаний</option>
+                    </select><br><br>
+
+                    <label for="news_title">News Title:</label><br>
+                    <input type="text" name="news_title" id="news_title" value="{{ request.GET.news_title }}"><br><br>
+
+                    <label for="news_date_start">News Start Date:</label><br>
+                    <input type="date" name="news_date_start" id="news_date_start" value="{{ request.GET.news_date_start }}"><br><br>
+
+                    <label for="news_date_end">News End Date:</label><br>
+                    <input type="date" name="news_date_end" id="news_date_end" value="{{ request.GET.news_date_end }}">
+                </td>
+
+                <!-- Фильтры для комментариев -->
+                <td>
+                    <label for="comm_author">Comment Author:</label><br>
+                    <input type="text" name="comm_author" id="comm_author" value="{{ request.GET.author }}"><br><br>
+
+                    <label for="comm_message">Comment Message:</label><br>
+                    <input type="text" name="comm_message" id="comm_message" value="{{ request.GET.comment_message }}"><br><br>
+
+                    <label for="comm_start_date">Comment Start Date:</label><br>
+                    <input type="date" name="comm_start_date" id="comm_start_date" value="{{ request.GET.comm_start_date }}"><br><br>
+
+                    <label for="comm_end_date">Comment End Date:</label><br>
+                    <input type="date" name="comm_end_date" id="comm_end_date" value="{{ request.GET.comm_end_date }}"><br><br>
+
+                    <label for="comm_type">Comment Type:</label><br>
+                    <select name="comm_type" id="comm_type">
+                        <option value="">Any</option>
+                        <option value="WY" {% if request.GET.comment_type == 'WY' %}selected{% endif %}>Yes</option>
+                        <option value="WN" {% if request.GET.comment_type == 'WN' %}selected{% endif %}>No</option>
+                    </select>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br>
+    <button type="submit">Filter</button>
+</form>
+    <ul>
+    {% for response in responses %}
+        <li>
+            <hr>
+            <strong>Category:</strong> {{ response.responseNews.category }}
+            <strong>News:</strong> {{ response.responseNews.title }}
+            <strong>Date:</strong> {{ response.responseNews.publicationDate }}
+            <br>
+            <strong>Type:</strong> {{ response.responseType }}
+            <strong>Com_Author:</strong> {{ response.responseAuthor }}
+            <strong>Com_Date:</strong> {{ response.responseDate }}
+            <br>
+            <strong>Message:</strong> {{ response.responseMessage | safe }}
+            {% if not response.is_approved %}
+                <a href="{% url 'approve_comment' response.id %}">Подтвердить</a>
+                <a href="{% url 'reject_comment' response.id %}">Отклонить</a>
+            {% else %}
+                <p>Комментарий подтвержден!</p>
+            {% endif %}
+            <a href="{% url 'delete_comment' response.id %}">Удалить</a>
+            <hr>
+        </li>
+    {% empty %}
+        <li>No responses to your news yet.</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endblock %}

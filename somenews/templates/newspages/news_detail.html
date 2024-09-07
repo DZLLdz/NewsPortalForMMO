@@ -1,0 +1,52 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+{% load custom_tags %}
+
+{% block title %}
+{{ news.title }}
+{% endblock title %}
+
+{% block content %}
+<table>
+    <tr>
+        <td>
+           <h3>Подробно о "{{ news.title }}"</h3>
+        </td>
+        <td>
+            <h3>от: {{ news.publicationDate | date:'d M Y H:i' }}</h3>
+        </td>
+        {% if news.author == request.user %}
+            <td><a href="/{{ news.id }}/update">Изменить содержимое</a></td>
+            <td><a href="/{{ news.id }}/delete">Удалить</a></td>
+        {% endif %}
+    </tr>
+</table>
+<hr>
+{{ news.content | safe }}
+<hr>
+<a href="{{ news.id }}/comment">Коментировать</a>
+{% if news_comments %}
+<h3>Комментарии:</h3>
+    <hr>
+        <table>
+            <tr>
+                <td>Дата публикации</td>
+                <td>Тип</td>
+                <td>Автор</td>
+                <td>Содержание</td>
+            </tr>
+            {% for comment in news_comments %}
+                <tr>
+                    <td>{{ comment.responseDate }}</td>
+                    <td>{{ comment.responseType }}</td>
+                    <td>{{ comment.responseAuthor.username }}</td>
+                    <td>{{ comment.responseMessage | safe }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    <hr>
+{% else %}
+    <h1>Комментариев нет! Будьте первым </h1>
+{% endif %}
+{% endblock content %}

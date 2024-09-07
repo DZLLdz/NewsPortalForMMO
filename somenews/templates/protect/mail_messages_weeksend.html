@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Уведомление</title>
+</head>
+<body>
+    {% load custom_filters %}
+    <h2>Приветствую лучшего пользователя портала MMO_News</h2>
+    {% if newss %}
+        <h3>Новые посты за неделю ждут ваших реакций!</h3>
+    {% endif %}
+        <hr>
+        <ul>
+        {% for news in newss %}
+            <li>
+                <a href="{{ link }}/news/{{ news.id }}">{{ news.title }}</a>
+                <p>[{{ news.publicationDate | date:'d:M:Y'}}]: {{ news.content | truncatechars:50 | censor_str }}</p>
+            </li>
+
+        </ul>
+        <hr>
+        {% empty %}
+            <h3>Наш портал ждет новых новостей от вас!</h3>
+            <hr>
+            <p><a href="{{ link }}/news/">Invite</a></p>
+            <hr>
+        {% endfor %}
+</body>
+</html>

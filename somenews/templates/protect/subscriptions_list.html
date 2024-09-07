@@ -1,0 +1,19 @@
+{% extends "flatpages/default.html" %}
+
+{% block content %}
+    <h2>Мои подписки</h2>
+        <ul>
+            {% for subscription in subscriptions %}
+                <li>
+                {{ subscription.get_category_display }}
+                    <form method="post" action="{% url 'unsubscribe' subscription.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit">Отписаться</button>
+                    </form>
+                </li>
+            {% empty %}
+                <li>Вы не подписаны ни на одну категорию.</li>
+            {% endfor %}
+        </ul>
+    <a href="{% url 'subscribe' %}">Подписаться на новую категорию</a>
+{% endblock %}

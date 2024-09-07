@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Уведомление об отклике</title>
+</head>
+<body>
+    <h2>«Здравствуй! На новость <a href="{{ link }}">{{ title }}</a> новый отклик: {{ category }}».</h2>
+    <hr>
+    <p> Если кратко: {{ content | truncatechars:50 | safe }} </p>
+</body>
+</html>

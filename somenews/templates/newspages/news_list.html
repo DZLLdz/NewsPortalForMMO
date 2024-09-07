@@ -1,0 +1,64 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+{% load custom_tags %}
+
+{% block title %}
+All news
+{% endblock title %}
+
+{% block content %}
+    <h1>Все новости</h1>
+    <h1>{{ time_now | date:'d:M:Y' }}</h1>
+    <h4>{{ next_post | default_if_none:"Наблюдаем за событиями...<br>Ищем новых авторов..."}}</h4>
+
+    {% if newss %}
+    <hr>
+        <table>
+            <tr>
+                <td>Дата публикации</td>
+                <td>Категория</td>
+                <td>Автор</td>
+                <td>Заоловок</td>
+                <td>Содержание</td>
+                <td>Ссылка</td>
+            </tr>
+            {% for news in newss %}
+                <tr>
+                    <td>{{ news.publicationDate }}</td>
+                    <td>{{ news.category }}</td>
+                    <td>{{ news.author.username }}</td>
+
+                    <td>{{ news.title | truncatechars:20 }}</td>
+                    <td>{{ news.content | truncatechars:20 | censor_str }}</td>
+                    <td>
+                        <a href="http://127.0.0.1:8000/news/{{ news.id }}">Читать далее</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    <hr>
+
+    {% if page_obj.has_previous %}
+        <a href="?{% url_replace page=1 %}">1</a>
+        {% if page_obj.previous_page_number != 1 %}
+            ...
+            <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+        {% endif %}
+    {% endif %}
+
+    {{ page_obj.number }}
+
+    {% if page_obj.has_next %}
+        <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+        {% if paginator.num_pages != page_obj.next_page_number %}
+            ...
+            <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+        {% endif %}
+    {% endif %}
+
+    {% else %}
+        <h1>Новостей нет!</h1>
+    {% endif %}
+
+{% endblock content %}
